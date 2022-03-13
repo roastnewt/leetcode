@@ -34,27 +34,62 @@ s consists of English letters, digits, symbols and spaces.
 */
 
 
+//
+// NAIVE O(n^2) SOLUTION
+//
+// var lengthOfLongestSubstring = function(s) {
+//   let array = s.split('');
+//   let longestString = 0;
+//   for (let i = 0; i < array.length; i++) {
+//       let seenCharacters = {};
+//       let currentLength = 0;
+//       let repeated = false;
+//       for (let j = i; !repeated && j < array.length; j++) {
+//           if (seenCharacters[array[j]] != undefined) {
+//               repeated = true;
+//           } else {
+//               seenCharacters[array[j]] = true;
+//               currentLength++;
+//           }
+//       }
+//       if (currentLength > longestString) {
+//           longestString = currentLength;
+//       }
+//   }
+
+//   return longestString;
+// };
+
+
+//
+// O(n) solution
+//
 var lengthOfLongestSubstring = function(s) {
   let array = s.split('');
-  let longestString = 0;
+  let seenCharacters = {};
+  let longestSubstring = 0;
+  let start = 0;
+
   for (let i = 0; i < array.length; i++) {
-      let seenCharacters = {};
-      let currentLength = 0;
-      let repeated = false;
-      for (let j = i; !repeated && j < array.length; j++) {
-          if (seenCharacters[array[j]] != undefined) {
-              repeated = true;
-          } else {
-              seenCharacters[array[j]] = true;
-              currentLength++;
+      if (seenCharacters[array[i]] >= start) {
+        // if current character has been seen:
+          if (i - start > longestSubstring) {
+            // record if this is longestsubstring so far
+            longestSubstring = i - start;
           }
+          // move starting character up just past where the current character was last seen, and continue checking
+          start = seenCharacters[array[i]] + 1;
       }
-      if (currentLength > longestString) {
-          longestString = currentLength;
-      }
+      // add current character to list of seen characters
+      seenCharacters[array[i]] = i;
   }
 
-  return longestString;
+  if (array.length - start > longestSubstring) {
+    // handles case that the longest substring ends the loop, or there are no repeated characters.
+    return array.length - start;
+  }
+
+  return longestSubstring;
 };
 
 module.exports = lengthOfLongestSubstring;
